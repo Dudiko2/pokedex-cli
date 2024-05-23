@@ -26,9 +26,8 @@ func NewClient() *Client {
 	return &c
 }
 
-func (c *Client) getLocationAreasRaw(urlString string) (body []byte,
-	err error) {
-	res, err := c.client.Get(urlString)
+func getData(urlString string) (body []byte, err error) {
+	res, err := http.Get(urlString)
 	if err != nil {
 		return body, err
 	}
@@ -53,7 +52,7 @@ func (c *Client) GetLocationAreas(p GetLocationAreasPayload) (LocationAreasRes,
 		if found {
 			return d, nil
 		}
-		d, err := c.getLocationAreasRaw(key)
+		d, err := getData(key)
 		if err != nil {
 			return []byte{}, err
 		}
