@@ -206,12 +206,29 @@ func runMapBack(args []string, conf *config) error {
 	return getLocations(offset, conf)
 }
 
+func printLocationExplore(l pokeapi.LocationRes) {
+	encountersLen := len(l.PokemonEncounters)
+	if encountersLen < 1 {
+		fmt.Println("No Pokemon found!")
+		return
+	}
+	fmt.Printf("Found Pokemon in %s:\n", l.Name)
+	for _, e := range l.PokemonEncounters {
+		fmt.Printf("- %s\n", e.Pokemon.Name)
+	}
+}
+
 func runExplore(args []string, conf *config) error {
 	argsLen := len(args)
 	if argsLen < 1 {
 		return errors.New("missing argument: id")
 	}
 	locationID := args[0]
-	conf.pokeapiClient.GetLocationArea(locationID)
+	fmt.Printf("Exploring %s...\n", locationID)
+	d, err := conf.pokeapiClient.GetLocationArea(locationID)
+	if err != nil {
+		return err
+	}
+	printLocationExplore(d)
 	return nil
 }
