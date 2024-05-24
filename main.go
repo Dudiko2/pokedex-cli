@@ -74,6 +74,8 @@ func newConfig() *config {
 	return &c
 }
 
+var caughtPokemon = map[string]pokeapi.PokemonRes{}
+
 const locationAreasLimit = 20
 
 func main() {
@@ -228,6 +230,7 @@ func runCatch(args []string, conf *config) error {
 	caught := calculateChance(pokemon.BaseExperience)
 	if caught {
 		fmt.Printf("%s was caught!", pokemon.Name)
+		caughtPokemon[pokemon.Name] = pokemon
 	} else {
 		fmt.Printf("%s escaped!", pokemon.Name)
 	}
