@@ -55,21 +55,6 @@ func (c *Client) cachedGetData(key string) ([]byte, error) {
 	return d, nil
 }
 
-func (c *Client) GetLocationAreas(p GetLocationAreasPayload) (LocationAreasRes,
-	error) {
-	path := fmt.Sprintf("location-area?offset=%v&limit=%v", p.Offset, p.Limit)
-	key := baseURL + path
-	body, err := c.cachedGetData(key)
-	if err != nil {
-		return LocationAreasRes{}, err
-	}
-	locations, err := parseJSON[LocationAreasRes](body)
-	if err != nil {
-		return LocationAreasRes{}, err
-	}
-	return locations, nil
-}
-
 func (c *Client) GetLocationArea(id string) (LocationRes, error) {
 	path := fmt.Sprintf("location-area/%s", id)
 	key := baseURL + path
@@ -84,11 +69,6 @@ func (c *Client) GetLocationArea(id string) (LocationRes, error) {
 	return location, nil
 }
 
-type GetLocationAreasPayload struct {
-	Offset int
-	Limit  int
-}
-
 func parseJSON[T any](data []byte) (T, error) {
 	var parsed T
 	err := json.Unmarshal(data, &parsed)
@@ -96,18 +76,6 @@ func parseJSON[T any](data []byte) (T, error) {
 		return parsed, err
 	}
 	return parsed, nil
-}
-
-type LocationAreasEntry struct {
-	Name string  `json:"name"`
-	Url  *string `json:"url"`
-}
-
-type LocationAreasRes struct {
-	Count    int                  `json:"count"`
-	Next     *string              `json:"next"`
-	Previous *string              `json:"previous"`
-	Results  []LocationAreasEntry `json:"results"`
 }
 
 type LocationRes struct {
