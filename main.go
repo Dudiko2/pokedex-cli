@@ -58,6 +58,11 @@ func newCommands() commandMap {
 			description: "Inspect caught Pokemon",
 			callback:    runInspect,
 		},
+		"pokedex": {
+			name:        "pokedex",
+			description: "List caughtr Pokemon",
+			callback:    runPokedex,
+		},
 	}
 	return m
 }
@@ -247,7 +252,7 @@ func printPokemon(p pokeapi.PokemonRes) {
 	fmt.Printf("Height: %v\n", p.Height)
 }
 
-func runInspect(args []string, _ *config) error {
+func runInspect(args []string, conf *config) error {
 	argsLen := len(args)
 	if argsLen < 1 {
 		return errors.New("missing argument: id")
@@ -259,5 +264,18 @@ func runInspect(args []string, _ *config) error {
 		return nil
 	}
 	printPokemon(p)
+	return nil
+}
+
+func runPokedex(args []string, conf *config) error {
+	pokedexSize := len(caughtPokemon)
+	if pokedexSize < 1 {
+		fmt.Println("Your Pokedex is empty")
+		return nil
+	}
+	fmt.Println("Your Pokedex:")
+	for pokemonName := range caughtPokemon {
+		fmt.Printf("- %s\n", pokemonName)
+	}
 	return nil
 }
