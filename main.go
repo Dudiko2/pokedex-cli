@@ -7,7 +7,6 @@ import (
 	"net/url"
 	"os"
 	"strconv"
-	"strings"
 
 	"github.com/dudiko2/pokedexcli/internal/pokeapi"
 )
@@ -47,6 +46,11 @@ func newCommands() commandMap {
 			description: "Explore an area",
 			callback:    runExplore,
 		},
+		"catch": {
+			name:        "catch",
+			description: "Attempt to catch a Pokemon",
+			callback:    runCatch,
+		},
 	}
 	return m
 }
@@ -70,30 +74,6 @@ func newConfig() *config {
 
 const locationAreasLimit = 20
 
-type parsedInput struct {
-	command   string
-	arguments []string
-}
-
-func parseInput(input string) parsedInput {
-	words := strings.Fields(input)
-	wordsLen := len(words)
-	if wordsLen < 1 {
-		return parsedInput{}
-	}
-	if wordsLen < 2 {
-		return parsedInput{
-			command:   words[0],
-			arguments: nil,
-		}
-	}
-	p := parsedInput{
-		command:   words[0],
-		arguments: words[1:],
-	}
-	return p
-}
-
 func main() {
 	conf := newConfig()
 	scanner := bufio.NewScanner(os.Stdin)
@@ -102,14 +82,6 @@ func main() {
 		input := prepareInput(scanner)
 		execCommand(input, conf)
 	}
-}
-
-func prepareInput(scanner *bufio.Scanner) parsedInput {
-	scanner.Scan()
-	input := scanner.Text()
-	sanitized := strings.TrimSpace(input)
-	parsed := parseInput(sanitized)
-	return parsed
 }
 
 func printPrompt() {
@@ -230,5 +202,9 @@ func runExplore(args []string, conf *config) error {
 		return err
 	}
 	printLocationExplore(d)
+	return nil
+}
+
+func runCatch(args []string, conf *config) error {
 	return nil
 }
