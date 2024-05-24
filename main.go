@@ -4,9 +4,11 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
+	"math/rand"
 	"net/url"
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/dudiko2/pokedexcli/internal/pokeapi"
 )
@@ -205,6 +207,29 @@ func runExplore(args []string, conf *config) error {
 	return nil
 }
 
+func calculateChance(value int) bool {
+	src := rand.NewSource(time.Now().UnixNano())
+	random := rand.New(src)
+	num := random.Intn(value)
+	return num < 20
+}
+
 func runCatch(args []string, conf *config) error {
+	argsLen := len(args)
+	if argsLen < 1 {
+		return errors.New("missing argument: id")
+	}
+	pokemonID := args[0]
+	pokemon, err := conf.pokeapiClient.GetPokemonData(pokemonID)
+	if err != nil {
+		return err
+	}
+	fmt.Printf("Throwing a Pokeball at %s...\n", pokemon.Name)
+	caught := calculateChance(pokemon.BaseExperience)
+	if caught {
+		fmt.Printf("%s was caught!", pokemon.Name)
+	} else {
+		fmt.Printf("%s escaped!", pokemon.Name)
+	}
 	return nil
 }
