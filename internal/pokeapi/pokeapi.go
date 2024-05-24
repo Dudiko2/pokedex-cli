@@ -14,14 +14,12 @@ import (
 const baseURL = "https://pokeapi.co/api/v2/"
 
 type Client struct {
-	client http.Client
-	cache  pokecache.Cache
+	cache pokecache.Cache
 }
 
 func NewClient() *Client {
 	c := Client{
-		client: http.Client{},
-		cache:  *pokecache.NewCache(5 * time.Minute),
+		cache: *pokecache.NewCache(5 * time.Minute),
 	}
 	return &c
 }
