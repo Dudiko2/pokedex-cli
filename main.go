@@ -53,6 +53,11 @@ func newCommands() commandMap {
 			description: "Attempt to catch a Pokemon",
 			callback:    runCatch,
 		},
+		"inspect": {
+			name:        "inspect",
+			description: "Inspect caught Pokemon",
+			callback:    runInspect,
+		},
 	}
 	return m
 }
@@ -234,5 +239,25 @@ func runCatch(args []string, conf *config) error {
 	} else {
 		fmt.Printf("%s escaped!", pokemon.Name)
 	}
+	return nil
+}
+
+func printPokemon(p pokeapi.PokemonRes) {
+	fmt.Printf("Name: %s\n", p.Name)
+	fmt.Printf("Height: %v\n", p.Height)
+}
+
+func runInspect(args []string, _ *config) error {
+	argsLen := len(args)
+	if argsLen < 1 {
+		return errors.New("missing argument: id")
+	}
+	pokemonName := args[0]
+	p, caught := caughtPokemon[pokemonName]
+	if !caught {
+		fmt.Printf("you have not caught %s\n", pokemonName)
+		return nil
+	}
+	printPokemon(p)
 	return nil
 }
